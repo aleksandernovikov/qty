@@ -1,4 +1,4 @@
-from django.db.models import Sum
+from django.db.models import Sum, Q, Count
 from django.test import TestCase
 
 from app.models import Warehouse, Item, WarehouseItemCount
@@ -49,3 +49,10 @@ class TestApp(TestCase):
             "app_warehouseitemcount"."id", "app_warehouseitemcount"."warehouse_id", "app_warehouse"."id", "app_warehouse"."title"
         """
 
+    def test_aggregate(self):
+        count_gte_min_qty = Sum('count', filter=Q(count__gte=3))
+
+        qs = WarehouseItemCount.objects.aggregate(
+            all_qty=count_gte_min_qty
+        )
+        print(qs)
